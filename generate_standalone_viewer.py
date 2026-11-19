@@ -236,22 +236,24 @@ def generate():
     let mixer, clock;
     let isPlaying = true;
 
+    // Presets calibrated for glTF Y-up coordinates:
+    // Front Street is at NEGATIVE Z, Interior is at POSITIVE Z
     const views = {{
       city: {{
-        pos: new THREE.Vector3(2.8, 9.8, 17.5),
-        target: new THREE.Vector3(0.0, 2.5, 0.8)
+        pos: new THREE.Vector3(2.8, 9.8, -17.5),
+        target: new THREE.Vector3(0.0, 2.5, -0.8)
       }},
       front: {{
-        pos: new THREE.Vector3(0.0, 3.2, 9.2),
-        target: new THREE.Vector3(0.0, 2.2, 0.0)
+        pos: new THREE.Vector3(0.0, 2.8, -9.0),
+        target: new THREE.Vector3(0.0, 2.0, 0.0)
       }},
       interior: {{
-        pos: new THREE.Vector3(-0.85, 1.40, -0.75),
-        target: new THREE.Vector3(0.10, 1.15, -1.90)
+        pos: new THREE.Vector3(-0.85, 1.40, 0.75),
+        target: new THREE.Vector3(0.10, 1.15, 1.90)
       }},
       baker: {{
-        pos: new THREE.Vector3(-0.35, 1.35, -1.05),
-        target: new THREE.Vector3(-0.35, 1.25, -1.85)
+        pos: new THREE.Vector3(-0.35, 1.35, 1.05),
+        target: new THREE.Vector3(-0.35, 1.25, 1.85)
       }}
     }};
 
@@ -283,12 +285,12 @@ def generate():
       controls.maxDistance = 60;
       controls.target.copy(views.city.target);
 
-      // Clean Balanced Lighting
-      const ambientLight = new THREE.AmbientLight(0x405575, 0.8);
+      // Clean Balanced Lighting for Night Scene
+      const ambientLight = new THREE.AmbientLight(0x405575, 0.85);
       scene.add(ambientLight);
 
-      const moonLight = new THREE.DirectionalLight(0x9bb8ff, 1.1);
-      moonLight.position.set(-10, 25, 15);
+      const moonLight = new THREE.DirectionalLight(0x9bb8ff, 1.2);
+      moonLight.position.set(-10, 25, -15);
       moonLight.castShadow = true;
       moonLight.shadow.mapSize.width = 2048;
       moonLight.shadow.mapSize.height = 2048;
@@ -296,19 +298,19 @@ def generate():
       scene.add(moonLight);
 
       const shopSpot = new THREE.PointLight(0xffb066, 2.5, 15);
-      shopSpot.position.set(0, 3.8, 2.5);
+      shopSpot.position.set(0, 3.8, -2.5);
       scene.add(shopSpot);
 
       const streetLight = new THREE.PointLight(0xffbe69, 3.0, 12);
-      streetLight.position.set(3.5, 3.6, 2.2);
+      streetLight.position.set(3.5, 3.6, -1.8);
       scene.add(streetLight);
 
       const interiorLight = new THREE.PointLight(0xffd18a, 2.5, 9);
-      interiorLight.position.set(0, 2.2, -1.8);
+      interiorLight.position.set(0, 2.2, 1.8);
       scene.add(interiorLight);
 
       const ovenLight = new THREE.PointLight(0xff5500, 2.2, 5);
-      ovenLight.position.set(-1.95, 1.0, -2.85);
+      ovenLight.position.set(-1.95, 1.0, 2.85);
       scene.add(ovenLight);
 
       // Star Particles
@@ -318,7 +320,6 @@ def generate():
       clock = new THREE.Clock();
       const loader = new THREE.GLTFLoader();
 
-      // Convert Base64 to ArrayBuffer
       const binaryString = atob(EMBEDDED_GLB_B64);
       const len = binaryString.length;
       const bytes = new Uint8Array(len);
@@ -338,6 +339,7 @@ def generate():
               const mats = Array.isArray(node.material) ? node.material : [node.material];
               mats.forEach(mat => {{
                 if (mat) {{
+                  mat.side = THREE.DoubleSide;
                   if (mat.roughness !== undefined) {{
                     mat.roughness = Math.min(mat.roughness, 0.75);
                   }}
@@ -379,7 +381,7 @@ def generate():
       for (let i = 0; i < count * 3; i += 3) {{
         positions[i] = (Math.random() - 0.5) * 80;
         positions[i + 1] = 12 + Math.random() * 35;
-        positions[i + 2] = -15 - Math.random() * 45;
+        positions[i + 2] = 15 + Math.random() * 45;
       }}
       starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       const starMat = new THREE.PointsMaterial({{
