@@ -1,0 +1,25 @@
+# Blender auto-backups
+*.blend1
+*.blend@
+
+# Temporary debug dumps & logs
+*.log
+*_debug*.txt
+comp_*.txt
+action_debug.txt
+cam_info.txt
+counts.txt
+fcurve_info.txt
+scene_inspect.txt
+txt_debug.txt
+txt_matrix.txt
+*.json
+test.png
+test_render.png
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+*.tmp
+.vscode/
+.idea/
